@@ -48,6 +48,7 @@ class BaseNet(nn.Module):
         # 绘制k-豆函数图像
         x = torch.linspace(1, highest_class_k, 100).view(-1, 1).to(self.device)
         y = self(x)
+        y[y<0] = 0
         fig, axs = plt.subplots()
         axs.plot(x.cpu().detach().numpy(), y.cpu().detach().numpy())
         axs.set_xlabel("class_k")

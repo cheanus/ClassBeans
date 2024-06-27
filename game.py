@@ -16,8 +16,8 @@ def init_basenet(base_net: BaseNet, num_train, device):
 
 def train():
     # 初始化参数
-    num_class = 400
-    volume = 60
+    num_class = 100
+    volume = 50
     num_stu = 1000
     total_beans = 100
     num_train = 100
@@ -43,7 +43,9 @@ def train():
         # 计算每个课程的最低豆子数
         beans_lower_bound = torch.tensor(students.get_beans_lower_bound())
         # 计算loss
-        loss1 = ((students.given_beans - students.class_selected*beans_lower_bound.reshape(1, -1))**2).mean()
+        loss1 = (students.given_beans - students.class_selected*beans_lower_bound.reshape(1, -1))
+        loss1[loss1<=0] = -torch.log(-loss1[loss1<=0]+1)
+        loss1 = torch.mean(loss1)
         x = torch.linspace(1, highest_num_stu_class/volume, 10).reshape(-1, 1).to(device)
         loss2 = (students.base_net(x).mean()-1)**2
         loss = loss1 + loss2
